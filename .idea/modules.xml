@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Megazone2024_AWS_Lambda.iml" filepath="$PROJECT_DIR$/.idea/Megazone2024_AWS_Lambda.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Megazone2024_AWS_Lambda.iml" filepath="$PROJECT_DIR$/Megazone2024_AWS_Lambda.iml" />
     </modules>
   </component>
 </project>

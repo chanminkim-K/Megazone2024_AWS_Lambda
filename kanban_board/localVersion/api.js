@@ -1,58 +1,74 @@
 export default class APIHandler {
   constructor() {
-    this.dummyData = [
-      {
-        id: "abc123",
-        title: "데이터베이스 구축하기",
-        category: "ongoing"
-      },
-      {
-        id: "def456",
-        title: "데이터베이스 삭제하기",
-        category: "todo"
-      }
-    ];
+    this.baseURL = 'https://rauxfq3477.execute-api.eu-west-2.amazonaws.com';  // Lambda API Gateway의 기본 URL
   }
 
-  // TODO: 전체 카드 객체 리스트 반환. 없으면 NULL
+  // 전체 카드 객체 리스트 반환. 없으면 NULL
   async getCards() {
-    if (this.dummyData.length === 0) {
+    try {
+      const response = await fetch(`${this.baseURL}/cards`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch cards');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching cards:', error);
       return null;
-    } else {
-      return this.dummyData;
     }
   }
 
-  // TODO: 카드 객체 생성/추가 후 ID 반환
+  // 카드 객체 생성/추가 후 ID 반환
   async postCard(cardObj) {
-    let id = Math.round(Math.random() * 10000).toString();
-    this.dummyData.push({
-      id: id,
-      title: cardObj.title,
-      category: cardObj.category
-    });
-    console.log(this.dummyData);
-    return id;    
+    try {
+      const response = await fetch(`${this.baseURL}/cards`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cardObj),
+      });
+      if (!response.ok) throw new Error('Failed to create card');
+      const data = await response.json();
+      return data.id;  // 새로 생성된 카드의 ID 반환
+    } catch (error) {
+      console.error('Error creating card:', error);
+    }
   }
 
-  // TODO: ID로 카드 검색 후 내용,카테고리 수정
+  // 카드 객체 수정
   async putCard(cardObj) {
-    this.dummyData = this.dummyData.map(card => {
-      return card.id === cardObj.id
-        ? { ...card, category: cardObj.category, title: cardObj.title }
-        : card;
-    });
-    console.log(this.dummyData)
+    try {
+      const { id, ...rest } = cardObj;
+      if (!id) throw new Error('ID가 없습니다.');
+      const response = await fetch(`${this.baseURL}/cards/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(rest),
+      });
+      if (!response.ok) throw new Error('Failed to update card');
+    } catch (error) {
+      console.error('Error updating card:', error);
+    }
   }
 
-  // TODO: ID로 카드 검색 후 삭제
+  // 카드 객체 삭제
   async deleteCard(id) {
-    this.dummyData = this.dummyData.filter(card =>{
-      return card.id !== id
-    });
-    console.log(this.dummyData);
+    try {
+      const response = await fetch(`${this.baseURL}/cards/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (!response.ok) throw new Error('Failed to delete card');
+    } catch (error) {
+      console.error('Error deleting card:', error);
+    }
   }
-
-  // TODO: API 요청 컨테이너. Method, Path, Body 속성
-  // TODO: API 호출 함수
 }
